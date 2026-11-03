@@ -7,3 +7,4 @@ importador/salida/
 *.xlsx
 public/demo-data.json
 capturas/
+*.tsbuildinfo
