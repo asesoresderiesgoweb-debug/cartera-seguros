@@ -204,6 +204,27 @@ function Masiva() {
   )
 }
 
+function CambiarClave() {
+  const [c1, setC1] = useState('')
+  const [c2, setC2] = useState('')
+  const [msg, setMsg] = useState<string | null>(null)
+  return (
+    <div className="tarjeta form">
+      <h3>Mi contraseña</h3>
+      <div className="dos">
+        <label>Nueva contraseña<input type="password" autoComplete="new-password" value={c1} onChange={(e) => setC1(e.target.value)} /></label>
+        <label>Repetirla<input type="password" autoComplete="new-password" value={c2} onChange={(e) => setC2(e.target.value)} /></label>
+      </div>
+      <div className="fila-botones">
+        <button disabled={c1.length < 8 || c1 !== c2} onClick={async () => {
+          try { await backend.cambiarClave(c1); setMsg('Contraseña cambiada ✓'); setC1(''); setC2('') } catch (e) { setMsg((e as Error).message) }
+        }}>Cambiar contraseña</button>
+        <span className="sutil">{msg ?? (c1 && c1.length < 8 ? 'Mínimo 8 caracteres' : c1 && c1 !== c2 ? 'No coinciden' : '')}</span>
+      </div>
+    </div>
+  )
+}
+
 function Usuarios() {
   const s = useStore()
   const [email, setEmail] = useState('')
@@ -311,7 +332,7 @@ export default function Configuracion() {
       {sec === 'rubros' && <Rubros />}
       {sec === 'aseguradoras' && <Aseguradoras />}
       {sec === 'masiva' && <Masiva />}
-      {sec === 'usuarios' && <Usuarios />}
+      {sec === 'usuarios' && <><CambiarClave /><Usuarios /></>}
       {sec === 'biblioteca' && <Biblioteca />}
       {sec === 'datos' && (
         <div>

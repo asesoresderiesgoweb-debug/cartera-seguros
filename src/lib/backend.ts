@@ -10,6 +10,7 @@ export interface Backend {
   alCambiarSesion(cb: (email: string | null) => void): () => void
   entrar(email: string, clave: string): Promise<void>
   salir(): Promise<void>
+  cambiarClave(nueva: string): Promise<void>
   cargarTodo(): Promise<Datos>
   guardar<T extends { id?: unknown }>(tabla: Tabla, fila: T): Promise<T>
   borrar(tabla: Tabla, id: number | string): Promise<void>
@@ -49,6 +50,10 @@ function supabaseBackend(url: string, key: string): Backend {
     },
     async salir() {
       await sb.auth.signOut()
+    },
+    async cambiarClave(nueva) {
+      const { error } = await sb.auth.updateUser({ password: nueva })
+      if (error) throw new Error(error.message)
     },
     async cargarTodo() {
       const [cfg, rubros, aseguradoras, clientes, polizas, items, usuarios, biblioteca] = await Promise.all([
@@ -118,6 +123,7 @@ function demoBackend(): Backend {
       try { sessionStorage.removeItem('demo-email') } catch { /* sin storage */ }
       avisar()
     },
+    async cambiarClave() { /* demo */ },
     async cargarTodo() {
       if (!datos) {
         const r = await fetch('demo-data.json')
