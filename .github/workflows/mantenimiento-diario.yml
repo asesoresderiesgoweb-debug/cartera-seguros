@@ -1,0 +1,20 @@
+# Corre todos los días a las 8:00 de Argentina (11:00 UTC).
+# 1) Pasa al Histórico las vencidas hace más de N días.
+# 2) Mantiene activo el proyecto gratuito de Supabase (se pausa tras 7 días sin uso).
+# Necesita dos "secrets" del repositorio: SUPABASE_URL y SUPABASE_ANON_KEY.
+name: Mantenimiento diario
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch: {}
+jobs:
+  mantenimiento:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a mantenimiento()
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          curl -fsS -X POST "$URL/rest/v1/rpc/mantenimiento" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -d '{}'

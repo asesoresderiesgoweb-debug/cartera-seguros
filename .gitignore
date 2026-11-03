@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+!.env.example
+importador/salida/
+*.xlsx
+public/demo-data.json
