@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "demo": "vite --mode demo",
+    "prebuild": "node -e \"if(require('fs').existsSync('public/demo-data.json')){console.error('Borrá public/demo-data.json antes de publicar: tiene datos personales');process.exit(1)}\"",
     "build": "tsc -b && vite build",
-    "build:demo": "tsc -b && vite build --mode demo",
     "preview": "vite preview"
   },
   "dependencies": {

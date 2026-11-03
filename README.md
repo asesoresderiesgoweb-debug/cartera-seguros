@@ -29,7 +29,7 @@ cp importador/salida/carga_inicial.json public/demo-data.json
 npm run demo
 ```
 
-`npm run demo` levanta la app con los datos en memoria, sin base y con cualquier mail. Para usar Supabase de verdad, crear un `.env` a partir de `.env.example` y correr `npm run dev`.
+`npm run demo` levanta la app con los datos en memoria, sin base y con cualquier mail. **Borrar `public/demo-data.json` antes de publicar** (`npm run build` se niega a seguir si lo encuentra). Para usar Supabase de verdad, crear un `.env` a partir de `.env.example` y correr `npm run dev`.
 
 ## Reglas principales
 
