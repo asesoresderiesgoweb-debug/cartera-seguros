@@ -6,7 +6,7 @@ import { exportarExcel } from '../lib/excel'
 import type { Aseguradora, Campo, Config, Opcion, Rubro, TipoCampo } from '../lib/types'
 import { norm } from '../lib/util'
 
-type Sec = 'general' | 'opciones' | 'rubros' | 'aseguradoras' | 'masiva' | 'usuarios' | 'datos' | 'biblioteca'
+type Sec = 'cuenta' | 'general' | 'opciones' | 'rubros' | 'aseguradoras' | 'masiva' | 'usuarios' | 'datos' | 'biblioteca'
 
 function General() {
   const s = useStore()
@@ -217,9 +217,12 @@ function CambiarClave() {
       </div>
       <div className="fila-botones">
         <button disabled={c1.length < 8 || c1 !== c2} onClick={async () => {
-          try { await backend.cambiarClave(c1); setMsg('Contraseña cambiada ✓'); setC1(''); setC2('') } catch (e) { setMsg((e as Error).message) }
+          try { await backend.cambiarClave(c1); setMsg('Contraseña cambiada ✓'); setC1(''); setC2('') } catch (e) {
+            const m = (e as Error).message
+            setMsg(/different/i.test(m) ? 'Es igual a la que ya tenés: elegí otra.' : /weak|short|least/i.test(m) ? 'Es muy corta o débil: probá con otra más larga.' : m)
+          }
         }}>Cambiar contraseña</button>
-        <span className="sutil">{msg ?? (c1 && c1.length < 8 ? 'Mínimo 8 caracteres' : c1 && c1 !== c2 ? 'No coinciden' : '')}</span>
+        <span className="sutil">{msg ?? (!c1 ? 'Escribila dos veces (mínimo 8 caracteres).' : c1.length < 8 ? 'Mínimo 8 caracteres' : c1 !== c2 ? 'Las dos no coinciden todavía' : '')}</span>
       </div>
     </div>
   )
@@ -313,10 +316,10 @@ function Biblioteca() {
 
 export default function Configuracion() {
   const s = useStore()
-  const [sec, setSec] = useState<Sec>('general')
+  const [sec, setSec] = useState<Sec>('cuenta')
   const [exp, setExp] = useState(false)
   const secciones: { v: Sec; label: string }[] = [
-    { v: 'general', label: 'Avisos' }, { v: 'opciones', label: 'Estados' }, { v: 'rubros', label: 'Rubros' },
+    { v: 'cuenta', label: 'Mi cuenta' }, { v: 'general', label: 'Avisos' }, { v: 'opciones', label: 'Estados' }, { v: 'rubros', label: 'Rubros' },
     { v: 'aseguradoras', label: 'Aseguradoras' }, { v: 'masiva', label: 'Renovación masiva' },
     { v: 'usuarios', label: 'Usuarios' }, { v: 'datos', label: 'Datos' }, { v: 'biblioteca', label: 'Biblioteca' },
   ]
@@ -332,7 +335,8 @@ export default function Configuracion() {
       {sec === 'rubros' && <Rubros />}
       {sec === 'aseguradoras' && <Aseguradoras />}
       {sec === 'masiva' && <Masiva />}
-      {sec === 'usuarios' && <><CambiarClave /><Usuarios /></>}
+      {sec === 'cuenta' && <CambiarClave />}
+      {sec === 'usuarios' && <Usuarios />}
       {sec === 'biblioteca' && <Biblioteca />}
       {sec === 'datos' && (
         <div>
